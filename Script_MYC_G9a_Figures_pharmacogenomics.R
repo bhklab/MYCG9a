@@ -4,8 +4,6 @@ library(scales)
 library(piano)
 library(GSA)
 
-setwd("Paper/")
-
 source("helpers.R")
 
 rnaseq_BC <- readRDS("Data/BC_rnaSeq.rda")
