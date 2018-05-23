@@ -4,15 +4,29 @@ library(scales)
 library(piano)
 library(GSA)
 
+
+
 source("helpers.R")
 
+
+# retrieve expression profiles of breast cancer cell lines
 rnaseq_BC <- readRDS("Data/BC_rnaSeq.rda")
 rnaseq_BC <- t(exprs(rnaseq_BC))
+
+# retrieve area-above-the-curve (AACs) represeting the response of cell lines to UNC0642
 AACs <- readRDS("Data/UNC0642_AAC.rda")
 AACs <- rescale(AACs,to = c(0,1),from = c(0,25)) 
 
+# mappings between different gene IDs such as ENSEMBLEID, Symbol, ENTREZ and so on
 geneMapping <- readRDS("Data/geneMapping.rda")
 
+
+
+#########################################
+#########################################
+
+# Finding the level of associations between each gene expression level and AAC. 
+# This will serve as the ranking list fed to GSEA
 
 drug_assoc <- PharmacoGx:::rankGeneDrugSensitivity(data = rnaseq_BC,drugpheno = AACs,single.type = T,nthread = 4)
 drug_assoc_drug <- as.matrix(drug_assoc[[1]])
@@ -25,6 +39,7 @@ drug_assoc_drug <- drug_assoc_drug[
 
 
 
+# Loading the MYC regulation signatures as gene sets
 gSets <- GSA.read.gmt("Data/MYC_regulation_signatures.gmt")
 dfgSets <- as.data.frame(cbind(unlist(gSets$genesets))) ## genes
 dfgSNames <- as.data.frame(cbind(unlist(gSets$geneset.names)))
@@ -48,6 +63,8 @@ genelevelstats <- drug_assoc_drug_NA[,"tstat"]
 
 names(genelevelstats) <- rownames(drug_assoc_drug_NA)
 genelevelstats <- sort(genelevelstats,decreasing = T)
+
+## running GSEA on 10 different MYC regulations signatures using rakning of the genes based on their univariate associations with UNC0642 response.
 gsea_out <- piano::runGSA(geneLevelStats=genelevelstats, geneSetStat="fgsea", gsc=gsc1,  nPerm=1000000, ncpus=4, adjMethod="none", verbose=FALSE)
 #saveRDS(gsea_out,"gsea_out.rda")
 
@@ -61,6 +78,8 @@ gseares <- gseares[,c("Name","Stat (dist.dir)","Genes (tot)","Genes (up)","Genes
 gseares <- gseares[order(gseares$pval),]
 
 
+
+# The top four MYC signatures associated with UNC0642 response
 sigPathways <- c("MYC_UP.V1","HALLMARK_MYC_TARGETS_V1","DANG_BOUND_BY_MYC","FERNANDEZ_BOUND_BY_MYC")
 
 
