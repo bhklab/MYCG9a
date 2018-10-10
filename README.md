@@ -2,8 +2,8 @@
 
 ## Introduction
 This is a project to regenerate the pharmacogenomics analysis in this paper:
-""
-citation's info to be added
+
+MYC Interacts with the G9a Histone Methyltransferase to Drive Transcriptional Repression and Tumorigenesis. Tu WB, Shiah YJ, Lourenco C, Mullen PJ, Dingar D, Redel C, Tamachi A, Ba-Alawi W, Aman A, Al-Awar R, Cescon DW, Haibe-Kains B, Arrowsmith CH, Raught B, Boutros PC, Penn LZ. Cancer Cell. 2018 Oct 8.
 
 The script for the analysis is written in R.
 
